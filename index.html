@@ -1,630 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Jakub Dworakowski — HRI Researcher</title>
-<meta name="description" content="Roboticist working at the intersection of robot learning and human-robot interaction. HRI Researcher, Ludo Robotics." />
-<style>
-  :root {
-    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Helvetica Neue", system-ui, sans-serif;
-    --mono: "SF Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-    --paper: #8fb8e0;          /* construction-paper blue */
-    --paper-2: #7ea9d6;
-    --paper-deep: #5f8cc0;
-    --note: #e9963c;
-    --ink: #1b222a;
-    --ink-soft: #3a4753;
-    --muted: #5f6f7c;
-    --accent: #1f5fb0;          /* ink blue */
-    --accent2: #d2554a;         /* crayon red */
-    --line: rgba(255, 255, 255, 0.35);  /* faint separation on blue */
-    --maxw: 1120px;
-    --gut: clamp(20px, 5vw, 64px);
-  }
-
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0; color: var(--ink); font-family: var(--sans);
-    font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    /* construction-paper texture: tiled fibrous blue paper image (scrolls with page) */
-    background-color: var(--paper);
-    background-image: url("paper.png");
-    background-size: 320px 320px;
-    background-repeat: repeat;
-  }
-  body::before {
-    content: ""; position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: 0; pointer-events: none;
-    background: radial-gradient(120% 120% at 50% 0%, transparent 60%, rgba(0,0,0,.06) 100%);
-  }
-  ::selection { background: var(--note); color: var(--ink); }
-
-  main { position: relative; z-index: 1; }
-  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gut); }
-  .mono {
-    font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em;
-    text-transform: uppercase; color: var(--muted);
-  }
-  .accent { color: var(--accent); }
-  a { color: inherit; text-decoration: none; }
-
-  /* ---------- top bar ---------- */
-  header.bar {
-    position: sticky; top: 0; z-index: 50;
-    background: color-mix(in srgb, var(--paper) 82%, transparent);
-    backdrop-filter: saturate(140%) blur(6px);
-    border-bottom: 1px solid var(--line);
-  }
-  .bar__in { display: flex; align-items: center; justify-content: space-between; height: 58px; }
-  .mark { font-weight: 600; font-size: 18px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
-  .mark .dot { width: 9px; height: 9px; background: var(--accent2); border-radius: 50%; transform: rotate(8deg); display: inline-block; }
-  nav.links { display: flex; gap: clamp(14px, 2.4vw, 30px); }
-  nav.links a {
-    font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase;
-    color: var(--muted); transition: color .16s ease, transform .16s ease;
-  }
-  nav.links a:hover { color: var(--accent); transform: translateY(-1px); }
-  @media (max-width: 640px) { nav.links { display: none; } }
-
-  /* ---------- sections ---------- */
-  section { padding: clamp(60px, 9vw, 120px) 0; border-top: 1px solid var(--line); }
-  section:first-of-type { border-top: 0; }
-  .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 40px; flex-wrap: wrap; }
-  .sec-num {
-    font-family: var(--mono); font-size: 12px; color: var(--accent2);
-    letter-spacing: 0.1em; transform: rotate(-3deg); display: inline-block;
-  }
-  .sec-title {
-    font-weight: 700; font-size: clamp(28px, 5vw, 46px); line-height: 1.02;
-    margin: 0; letter-spacing: -0.02em; color: var(--ink);
-  }
-  .sec-note { margin-left: auto; align-self: center; }
-
-  /* ---------- hero ---------- */
-  .hero { padding-top: clamp(46px, 7vw, 86px); }
-  .hero__grid { display: grid; grid-template-columns: 1.55fr 1fr; gap: clamp(28px, 5vw, 72px); align-items: start; }
-  @media (max-width: 860px) { .hero__grid { grid-template-columns: 1fr; gap: 32px; } }
-  .eyebrow { margin-bottom: 14px; }
-  .hero h1 {
-    font-weight: 700; font-size: clamp(3.4rem, 11vw, 6.4rem); line-height: 0.95;
-    margin: 0 0 10px; letter-spacing: -0.03em; color: var(--ink);
-  }
-  .hero h1 .ink { color: var(--accent); }
-  .lede { font-size: clamp(16px, 2vw, 20px); line-height: 1.6; max-width: 46ch; color: var(--ink-soft); margin: 6px 0 0; }
-  .lede b { color: var(--ink); font-weight: 600; }
-  .squiggle { display: block; margin: 8px 0 14px; width: clamp(140px, 26vw, 240px); height: 14px; }
-  .hero__photo {
-    width: 100%; max-width: 400px;
-    border-radius: 12px; overflow: hidden;
-    box-shadow: 0 8px 24px rgba(20,45,80,0.15);
-    transform: rotate(-1.5deg);
-  }
-  .hero__photo img { display: block; width: 100%; }
-
-  /* cream paper card with its own fibrous texture */
-  .card {
-    background-color: var(--note);
-    background-image: url("paper_cream.png");
-    border: 1px solid rgba(30,70,110,.12); border-radius: 10px;
-    box-shadow: 0 4px 14px rgba(20, 45, 80, .16);
-  }
-  .note {
-    background-color: var(--note);
-    background-image: url("paper_cream.png");
-    padding: 18px 20px 16px;
-    box-shadow: 0 4px 14px rgba(20, 45, 80, .16); position: relative; border: 1px solid rgba(30,70,110,.12); border-radius: 10px;
-  }
-  .note dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 14px; }
-  .note dt { font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
-  .note dd { margin: 0; font-size: 14px; }
-  .note .tagrow { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.02em;
-    background: rgba(255,255,255,.45); border: 1px solid rgba(0,0,0,.12); padding: 2px 7px; color: var(--ink-soft); }
-
-  /* ---------- about ---------- */
-  .about__grid { display: grid; grid-template-columns: 1fr 1.45fr; gap: clamp(28px, 6vw, 80px); align-items: start; }
-  @media (max-width: 820px) { .about__grid { grid-template-columns: 1fr; gap: 26px; } }
-  .pillars { display: grid; gap: 14px; }
-  .pillar {
-    background-color: var(--note);
-    background-image: url("paper_cream.png");
-    border: 1px solid rgba(30,70,110,.12); padding: 16px 18px; border-radius: 10px;
-    transform: rotate(-0.4deg); box-shadow: 0 2px 8px rgba(20,45,80,.12);
-  }
-  .pillar:nth-child(2) { transform: rotate(0.5deg); }
-  .pillar h4 { font-weight: 700; font-size: 18px; margin: 0 0 4px; color: var(--accent); letter-spacing: -0.01em; }
-  .pillar p { font-size: 14px; margin: 0; color: var(--muted); line-height: 1.5; }
-  .about p { font-size: clamp(15px, 1.8vw, 18px); line-height: 1.7; color: var(--ink-soft); margin: 0 0 16px; max-width: 60ch; }
-  .about p strong { color: var(--ink); font-weight: 600; }
-
-  /* ---------- experience ---------- */
-  .exp__row { display: grid; grid-template-columns: 1fr 1.45fr; gap: clamp(10px, 3vw, 24px); padding: 26px 0; }
-  @media (max-width: 760px) { .exp__row { grid-template-columns: 1fr; gap: 10px; } }
-  .exp__left .role { font-weight: 700; font-size: 20px; margin: 0; line-height: 1.1; color: var(--ink); }
-  .exp__left .org { font-size: 15px; color: var(--ink-soft); margin: 6px 0 0; }
-  .exp__left .when { margin-top: 8px; color: var(--ink-soft); }
-  .exp__right ul { margin: 0; padding-left: 20px; }
-  .exp__right li { font-size: 14.5px; line-height: 1.55; color: var(--ink-soft); margin-bottom: 8px; max-width: 62ch; }
-  .exp__right li::marker { color: #000000; }
-  .redact { color: transparent; background: #000000; cursor: pointer; transition: color 0.2s; border-radius: 2px; }
-  .redact:hover { color: #3a4753; background: transparent; }
-  
-  .exp__card {
-    background-color: #fcefd6;
-    background-image: url("paper_cream.png");
-    border: 1px solid rgba(210, 85, 74, 0.25); border-radius: 10px;
-    box-shadow: 0 4px 14px rgba(210, 85, 74, 0.18);
-    padding: 24px; margin-bottom: 24px;
-  }
-  .redact { color: transparent; background: #000000; cursor: pointer; transition: color 0.2s; border-radius: 2px; }
-  .redact:hover { color: #3a4753; background: transparent; }
-  .proj__controls { display: flex; align-items: center; gap: 12px; margin-left: auto; }
-  .btn {
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
-    border: 1.5px solid var(--ink-soft); background: transparent; color: var(--ink-soft);
-    padding: 7px 13px; cursor: pointer; border-radius: 2px; transition: all .16s ease;
-  }
-  .btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
-  .btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(22px, 3vw, 40px); }
-  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
-  .tile {
-    position: relative; padding: 0; display: flex; flex-direction: column;
-    transition: transform .2s ease;
-  }
-  .tile__media {
-    aspect-ratio: 4 / 3; position: relative; overflow: hidden; background: var(--paper-2);
-    border: 1px solid rgba(0,0,0,.10); border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.08);
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-    transition: box-shadow .2s ease, transform .2s ease;
-  }
-  .tile__media:hover { box-shadow: 0 6px 18px rgba(0,0,0,.14); transform: translateY(-2px); }
-  .tile__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .tile__ph {
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--muted);
-    text-transform: uppercase; pointer-events: none; display: flex; flex-direction: column;
-    align-items: center; gap: 7px; padding: 14px; text-align: center;
-  }
-  .tile__ph .plus { font-size: 20px; opacity: .5; }
-  .tile__cap { padding: 12px 4px 4px; }
-  .tile__cat { margin-bottom: 4px; }
-  .tile__title { font-weight: 600; font-size: 19px; line-height: 1.15; margin: 0 0 4px; color: var(--ink); letter-spacing: -0.01em; }
-  .tile__desc { font-size: 13.5px; line-height: 1.5; color: var(--muted); margin: 0; }
-  .tile__handle {
-    position: absolute; top: 10px; right: 10px; width: 28px; height: 28px;
-    display: none; align-items: center; justify-content: center;
-    background: var(--ink); color: var(--paper); border-radius: 3px; cursor: grab; z-index: 4;
-    font-family: var(--mono); font-size: 13px;
-  }
-  body.arrange .tile { cursor: grab; }
-  body.arrange .tile__handle { display: flex; }
-  body.arrange .tile__media { cursor: default; }
-  body.arrange .tile[draggable="true"] { outline: 2px dashed var(--accent); outline-offset: 3px; }
-  .tile.drag-over { outline: 3px solid var(--accent2) !important; outline-offset: 3px; }
-  .tile.dragging { opacity: 0.5; }
-
-  /* ---------- publications ---------- */
-  .pubs.card {
-    padding: 8px 22px; gap: 0;
-    background-color: var(--note);
-    background-image: url("paper_cream.png");
-    border: 1px solid rgba(30,70,110,.12); border-radius: 10px;
-    box-shadow: 0 4px 14px rgba(20,45,80,.16);
-  }
-  .pubs { display: grid; gap: 0; }
-  .pub { display: grid; grid-template-columns: auto 1fr; gap: 14px; padding: 15px 4px; align-items: baseline; }
-  .pub .box { font-size: 16px; color: var(--accent); line-height: 1; }
-  .pub .pt { font-size: 15px; line-height: 1.45; }
-  .pub .pt em { font-style: normal; color: var(--muted); }
-  .pub .pv { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 3px; letter-spacing: 0.02em; }
-
-  /* ---------- contact ---------- */
-  .contact__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 64px); align-items: start; }
-  @media (max-width: 760px) { .contact__grid { grid-template-columns: 1fr; } }
-  .contact h3 { font-weight: 700; font-size: clamp(30px, 5vw, 52px); line-height: 1.0; margin: 0 0 12px; letter-spacing: -0.02em; color: var(--ink); }
-  .contact p { color: var(--ink-soft); max-width: 44ch; margin: 0; }
-  .clinks { display: grid; gap: 0; }
-  .clink {
-    display: flex; align-items: center; justify-content: space-between; padding: 13px 4px;
-    border-bottom: 1px solid var(--line); font-weight: 600; font-size: 17px; color: var(--ink);
-    transition: padding .16s ease, color .16s ease, transform .16s ease;
-  }
-  .clink:first-child { border-top: 1px solid var(--line); }
-  .clink:hover { padding-left: 12px; color: var(--accent); transform: rotate(-0.4deg); }
-  .clink .arrow { font-family: var(--mono); font-size: 13px; color: var(--muted); }
-  .clink:hover .arrow { color: var(--accent); }
-
-  footer.foot { border-top: 1px solid var(--line); padding: 26px 0; }
-  .foot__in { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-
-  /* swing-in: each element gets a random start transform (assigned via CSS vars by JS) */
-  .reveal {
-    opacity: 0;
-    transform: translate(var(--rx, 0px), var(--ry, 24px)) rotate(var(--rr, 0deg));
-    transition: opacity .7s cubic-bezier(.2,.7,.25,1), transform .7s cubic-bezier(.2,.7,.25,1);
-    will-change: opacity, transform;
-  }
-  .reveal.in { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) {
-    .reveal { opacity: 1; transform: none !important; transition: none; }
-    html { scroll-behavior: auto; }
-    .tile, .note, .pillar { transform: none !important; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jakub Dworakowski — HRI Researcher</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1f2228;
+      --text: #ffffff;
+      --accent: #3b82f6;
+      --muted: rgba(255, 255, 255, 0.5);
+      --border: rgba(255, 255, 255, 0.1);
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+    main { max-width: 1200px; margin: 0 auto; padding: 48px; }
+    h1 { font-size: clamp(4rem, 15vw, 12rem); font-weight: 300; margin: 0; line-height: 1; letter-spacing: -0.02em; }
+    h2 { font-size: 0.9rem; letter-spacing: 1.4px; color: var(--muted); margin-bottom: 24px; text-transform: uppercase; }
+    section { padding: 96px 0; border-top: 1px solid var(--border); }
+    .hero { border: none; padding-top: 120px; }
+    p { max-width: 60ch; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    .redact { color: transparent; background: #ffffff; cursor: pointer; transition: color 0.2s; border-radius: 2px; }
+    .redact:hover { color: var(--text); background: transparent; }
+    .exp-item { padding: 24px 0; border-top: 1px solid var(--border); }
+    .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+    .card { border: 1px solid var(--border); padding: 24px; }
+    .card h3 { margin: 0 0 12px; font-weight: 400; font-size: 1.2rem; }
+  </style>
 </head>
 <body>
+  <main>
+    <section class="hero">
+      <h1 style="display: flex; align-items: center; flex-wrap: wrap;">
+        JAKUB
+        <img src="me.jpg" alt="Jakub Dworakowski" style="width: 10vw; height: 10vw; border-radius: 50%; object-fit: cover; margin: 0 1vw;" />
+        DWORAKOWSKI
+      </h1>
+      <p style="margin-top: 24px; font-size: 1.5rem;">HRI Researcher. Robot learning & interaction systems.</p>
+    </section>
 
-<header class="bar">
-  <div class="wrap bar__in">
-    <a href="#top" class="mark"><span class="dot"></span>Jakub Dworakowski</a>
-    <nav class="links">
-      <a href="#about">About</a>
-      <a href="#experience">Experience</a>
-      <a href="#work">Work</a>
-      <a href="#publications">Writing</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </div>
-</header>
-
-<main id="top">
-
-  <!-- HERO -->
-  <section class="hero" id="hero">
-    <div class="wrap">
-      <div class="hero__grid">
-      <div class="hero__photo">
-        <img src="me.jpg" alt="Jakub Dworakowski" />
+    <section id="experience">
+      <h2>EXPERIENCE</h2>
+      <div class="exp-item">
+        <h3>HRI Researcher</h3>
+        <p>May 2026 — Present</p>
+        <p style="color: var(--text); margin-top: 8px;">Exploring the frontiers of human-robot interaction and adaptive robot learning in the wild.</p>
       </div>
-      <div>
-        <div class="eyebrow mono">Roboticist — Robot Learning &amp; Human-Robot Interaction</div>
-          <h1>Jakub<br /><span class="ink">Dworakowski</span></h1>
-          <svg class="squiggle" viewBox="0 0 240 14" fill="none" aria-hidden="true">
-            <path d="M2 9 C 30 2, 50 12, 80 7 S 140 2, 170 8 S 220 12, 238 5" stroke="var(--accent2)" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          <p class="lede">I build machines that <b>perceive</b>, <b>act</b>, and <b>interact</b> with people.</p>
-        </div>
-        <aside class="note">
-          <dl>
-            <dt>Focus</dt>
-            <dd>
-              <div class="tagrow">
-                <span class="tag">Robot Learning</span>
-                <span class="tag">HRI</span>
-                <span class="tag">State Estimation</span>
-                <span class="tag">Planning</span>
-              </div>
-            </dd>
-            <dt>Say hi</dt><dd><a href="https://www.linkedin.com/in/tehjakub" target="_blank">LinkedIn →</a></dd>
-          </dl>
-        </aside>
+      <div class="exp-item">
+        <h3>Staff Roboticist</h3>
+        <p>Dec 2019 — May 2026</p>
+        <ul style="color: var(--muted); margin-top: 8px;">
+          <li><span class="redact">Built a ~100MB language-conditioned action retrieval model for human-device interaction (~70% accuracy).</span></li>
+          <li><span class="redact">Trained an active-perception policy in a continuous-action setting using PPO.</span></li>
+          <li><span class="redact">Co-formulated a framework for human-device interaction with the design team.</span></li>
+          <li><span class="redact">Produced a state-estimation stack for humans and objects using EKFs and discrete Bayes filters.</span></li>
+          <li><span class="redact">Online controller tuning via genetic algorithm; SIMD 3×3 eigen solver; RRT expansion primitive with smoothness guarantees; binary-search collision checking (7× faster).</span></li>
+        </ul>
       </div>
-    </div>
-  </section>
+      <div class="exp-item">
+        <h3>Algorithms Engineer</h3>
+        <p>Jun 2016 — Dec 2019</p>
+        <ul style="color: var(--muted); margin-top: 8px;">
+          <li><span class="redact">Event-based camera calibration with real-time application.</span></li>
+          <li><span class="redact">Hard real-time knot-a-not and convolutional cubic interpolation optimized for Apple Silicon.</span></li>
+          <li><span class="redact">Occupancy-grid container with real-time memory-access guarantees and efficient CPU projection.</span></li>
+          <li><span class="redact">Online lidar pipelines using Apple SIMD and Metal compute; header-only Metal/C++ compatibility library.</span></li>
+        </ul>
+      </div>
+    </section>
 
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <span class="sec-num">01</span>
-        <h2 class="sec-title">About</h2>
-      </div>
-      <div class="about__grid">
-        <div class="reveal">
-          <div class="pillars">
-            <div class="pillar">
-              <h4>Robot Learning</h4>
-              <p>Language-conditioned policies, active perception, and online learning that runs under tight real-time budgets.</p>
-            </div>
-            <div class="pillar">
-              <h4>Human-Robot Interaction</h4>
-              <p>Frameworks for how devices and robots read intent and respond — rigorous systems with a human in the loop.</p>
-            </div>
-          </div>
-        </div>
-        <div class="reveal">
-          <p>I'm an HRI Researcher at <strong>Ludo Robotics</strong>, where we explore the frontiers of human-robot interaction and adaptive robot learning in the wild.</p>
-          <p>Before that I was a Staff Roboticist at <strong>Apple AIML</strong>, where I worked across the stack that lets a device understand people and act in physical space — from compact language-conditioned action models to active-perception policies trained with PPO, alongside state-estimation and motion-planning foundations.</p>
-          <p>I also spent three years in Apple's Special Projects Group on <strong>real-time perception</strong>: event-camera calibration, occupancy grids with hard latency guarantees, and lidar pipelines built on Apple Silicon. My roots are in mechatronics (<strong>Waterloo</strong>) and interactive intelligence (<strong>Georgia Tech</strong>).</p>
+    <section id="about">
+      <h2>ABOUT</h2>
+      <div class="grid">
+        <p>I explore the frontiers of human-robot interaction and adaptive robot learning in the wild. I build systems that perceive, act, and interact.</p>
+        <div>
+          <p>I am currently an HRI Researcher at <strong>Ludo Robotics</strong>.</p>
+          <p>Previously a Staff Roboticist, where I worked across the stack that lets a device understand people and act in physical space — from compact language-conditioned action models to active-perception policies trained with PPO, alongside state-estimation and motion-planning foundations.</p>
+          <p>Before that I spent three years in Special Projects on <strong>real-time perception</strong>: event-camera calibration, occupancy grids with hard latency guarantees, and lidar pipelines built on Apple Silicon. My roots are in mechatronics (<strong>Waterloo</strong>) and interactive intelligence (<strong>Georgia Tech</strong>).</p>
           <p>Off the clock I prototype open interaction systems — most recently a voice-driven framework for the Reachy Mini, and a long thread of research on compressing and understanding neural networks.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- EXPERIENCE -->
-  <section id="experience">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <span class="sec-num">02</span>
-        <h2 class="sec-title">Experience</h2>
-      </div>
-      <div class="exp">
-        <div class="exp__row reveal exp__card">
-          <div class="exp__left">
-            <p class="role">Staff Roboticist</p>
-            <p class="org">Apple, AIML — Cupertino, CA</p>
-            <p class="when mono">Dec 2019 — May 2026</p>
-          </div>
-          <div class="exp__right">
-            <ul>
-              <li><span class="redact">Built a ~100&nbsp;MB language-conditioned action retrieval model for human-device interaction (~70% accuracy).</span></li>
-              <li><span class="redact">Trained an active-perception policy in a continuous-action setting using PPO.</span></li>
-              <li><span class="redact">Co-formulated a framework for human-device interaction with the design team.</span></li>
-              <li><span class="redact">Produced a state-estimation stack for humans and objects using EKFs and discrete Bayes filters.</span></li>
-              <li><span class="redact">Online controller tuning via genetic algorithm; SIMD 3×3 eigen solver; RRT expansion primitive with smoothness guarantees; binary-search collision checking (7× faster).</span></li>
-            </ul>
-          </div>
+    <section id="work">
+      <h2>PROJECTS</h2>
+      <div class="project-grid">
+        <div class="card">
+          <h3>Multi-Modal Interaction (Reachy Mini)</h3>
+          <p>Voice-driven behavior planning (Whisper + GPT-OSS), JAX trajectory generation, open-set detection fused with EKF tracking.</p>
         </div>
-        <div class="exp__row reveal exp__card">
-          <div class="exp__left">
-            <p class="role">Algorithms Engineer</p>
-            <p class="org">Apple, SPG — Sunnyvale, CA</p>
-            <p class="when mono">Jun 2016 — Dec 2019</p>
-          </div>
-          <div class="exp__right">
-            <ul>
-              <li><span class="redact">Event-based camera calibration with real-time application.</span></li>
-              <li><span class="redact">Hard real-time knot-a-not and convolutional cubic interpolation optimized for Apple Silicon.</span></li>
-              <li><span class="redact">Occupancy-grid container with real-time memory-access guarantees and efficient CPU projection.</span></li>
-              <li><span class="redact">Online lidar pipelines using Apple SIMD and Metal compute; header-only Metal/C++ compatibility library.</span></li>
-            </ul>
-          </div>
+        <div class="card">
+          <h3>Dynamic SVD Compression</h3>
+          <p>Heuristic rank reduction during training that retains accuracy at roughly 20% of the original size.</p>
         </div>
-        <div class="exp__row reveal exp__card">
-          <div class="exp__left">
-            <p class="role">Robotics SW Intern</p>
-            <p class="org">Clearpath Robotics — Kitchener, ON</p>
-            <p class="when mono">Sep — Dec 2014</p>
-          </div>
-          <div class="exp__right">
-            <ul>
-              <li>CAN ROS driver generator — cut development from weeks to seconds.</li>
-              <li>Integrated sensors onto an autonomous test platform and a street-legal vehicle.</li>
-            </ul>
-          </div>
+        <div class="card">
+          <h3>Singular-Value Analysis</h3>
+          <p>An SVD lens on gradient descent with/without momentum under dropout — plus a gradient-perturbation layer.</p>
+        </div>
+        <div class="card">
+          <h3>Depth-Enhanced ConvNet</h3>
+          <p>Recovers RGB-D benefits without a depth channel; implemented in TensorFlow with transfer learning.</p>
+        </div>
+        <div class="card">
+          <h3>RL for PID Tuning</h3>
+          <p>Custom continuous policy-gradient formulations for directly tuning controller gains online.</p>
+        </div>
+        <div class="card">
+          <h3>Neural-Driven Arm Control</h3>
+          <p>Real-time closed-loop control of a live human arm with vanilla Q-learning, using a Kinect and electrode pads.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- WORK / PROJECTS -->
-  <section id="work">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <span class="sec-num">03</span>
-        <h2 class="sec-title">Things I've Made</h2>
-        <div class="proj__controls sec-note">
-          <span class="mono" id="arrangeHint">tap a photo to add yours · drag to arrange</span>
-          <button class="btn" id="arrangeBtn" aria-pressed="false">Arrange</button>
-        </div>
-      </div>
-      <div class="grid" id="grid"><!-- tiles injected by JS --></div>
-    </div>
-  </section>
-
-  <!-- PUBLICATIONS -->
-  <section id="publications">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <span class="sec-num">04</span>
-        <h2 class="sec-title">Writing &amp; Papers</h2>
-      </div>
-      <div class="pubs card">
-        <div class="pub reveal"><span class="box">☐</span><div>
-          <div class="pt">Multi-Modal Interaction Framework for Reachy Mini: voice-driven behavior planning and JAX trajectory generation. <em>Project write-up (in progress).</em></div>
-          <div class="pv">2025 · draft</div></div></div>
-        <div class="pub reveal"><span class="box">☐</span><div>
-          <div class="pt">Dynamic Neural Network Compression via SVD Rank Reduction During Training. <em>Retains accuracy at ~20% of original size.</em></div>
-          <div class="pv">2024 · draft</div></div></div>
-        <div class="pub reveal"><span class="box">☐</span><div>
-          <div class="pt">Singular-Value Analysis of Weight Matrices Under Dropout and Momentum. <em>With a gradient-perturbation layer realizing the findings.</em></div>
-          <div class="pv">2024 · draft</div></div></div>
-        <div class="pub reveal"><span class="box">☐</span><div>
-          <div class="pt">Depth-Enhanced Convolutional Network for RGB Classification. <em>Recovers RGB-D benefits without a depth channel (TensorFlow, transfer learning).</em></div>
-          <div class="pv">2023 · draft</div></div></div>
-        <div class="pub reveal"><span class="box">☐</span><div>
-          <div class="pt">RL for PID Tuning &amp; Human Arm Control via Nerve Stimulation. <em>Continuous policy gradients; live human-arm control via Q-learning.</em></div>
-          <div class="pv">2022–23 · draft</div></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="contact" class="contact">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <span class="sec-num">05</span>
-        <h2 class="sec-title">Say Hello</h2>
-      </div>
-      <div class="contact__grid">
-        <div class="reveal">
-          <h3>Let's build<br />something that moves.</h3>
+    <section id="contact">
+      <h2>SAY HELLO</h2>
+      <div class="grid">
+        <div>
+          <h3>Let's build something that moves.</h3>
           <p>Open to research collaborations, consulting, and conversations about robot learning and interaction.</p>
         </div>
-        <div class="reveal">
-          <div class="clinks">
-            <a class="clink" href="mailto:iamjdworakowski@gmail.com">Email <span class="arrow">→</span></a>
-            <a class="clink" href="#" data-ph="GitHub">GitHub <span class="arrow">→</span></a>
-            <a class="clink" href="#" data-ph="Google Scholar">Google Scholar <span class="arrow">→</span></a>
-            <a class="clink" href="#" data-ph="LinkedIn">LinkedIn <span class="arrow">→</span></a>
-          </div>
+        <div>
+          <a href="mailto:iamjdworakowski@gmail.com" style="display:block; color:var(--text); margin-bottom:12px;">Email →</a>
+          <a href="https://www.linkedin.com/in/tehjakub" target="_blank" style="display:block; color:var(--text); margin-bottom:12px;">LinkedIn →</a>
         </div>
       </div>
-    </div>
-  </section>
-
-</main>
-
-<footer class="foot">
-  <div class="wrap foot__in">
-    <span class="mono">© 2026 Jakub Dworakowski</span>
-    <span class="mono">Scribbled with care · Cupertino, CA</span>
-  </div>
-</footer>
-
-<script>
-  const PROJECTS = [
-    { id: "reachy",   cat: "REACHY MINI · 2025",  title: "Multi-Modal Interaction",
-      desc: "Voice-driven behavior planning (Whisper + GPT-OSS), JAX trajectory generation, open-set detection fused with EKF tracking." },
-    { id: "reachy-mini-topic", cat: "TOPIC · 2026", title: "Reachy Mini Ecosystem",
-      desc: "An exploration of Reachy Mini capabilities: modular control, JAX-based trajectory planning, and voice-driven multimodal interaction." },
-    { id: "svdcomp",  cat: "RESEARCH · 2024",     title: "Dynamic SVD Compression",
-      desc: "Heuristic rank reduction during training that retains accuracy at roughly 20% of the original size." },
-    { id: "svdanal",  cat: "RESEARCH · 2024",     title: "Singular-Value Analysis",
-      desc: "An SVD lens on gradient descent with/without momentum under dropout — plus a gradient-perturbation layer." },
-    { id: "rgbd",     cat: "RESEARCH · 2023",     title: "Depth-Enhanced ConvNet",
-      desc: "Recovers RGB-D benefits without a depth channel; implemented in TensorFlow with transfer learning." },
-    { id: "pid",      cat: "RESEARCH · 2023",     title: "RL for PID Tuning",
-      desc: "Custom continuous policy-gradient formulations for directly tuning controller gains online." },
-    { id: "nerve",    cat: "RESEARCH · 2022",     title: "RL Arm Control",
-      desc: "Closed-loop control of a live human arm with vanilla Q-learning, using a Kinect and electrode pads." },
-  ];
-
-  const grid = document.getElementById("grid");
-  const ORDER_KEY = "jd.order.v3";
-  const MEDIA_KEY = "jd.media.v3";
-
-  let order = (() => { try { return JSON.parse(localStorage.getItem(ORDER_KEY)) || null; } catch { return null; } })();
-  let media = (() => { try { return JSON.parse(localStorage.getItem(MEDIA_KEY)) || {}; } catch { return {}; } })();
-
-  if (!order || order.length !== PROJECTS.length) order = PROJECTS.map(p => p.id);
-  const byId = Object.fromEntries(PROJECTS.map(p => [p.id, p]));
-
-  function fileInput() {
-    const i = document.createElement("input");
-    i.type = "file"; i.accept = "image/*"; return i;
-  }
-
-  function render() {
-    grid.innerHTML = "";
-    order.forEach(id => {
-      const p = byId[id]; if (!p) return;
-      const tile = document.createElement("article");
-      tile.className = "tile";
-      tile.dataset.id = id;
-
-      const media_html = media[id]
-        ? `<img src="${media[id]}" alt="${p.title} graphic" />`
-        : `<div class="tile__ph"><span class="plus">+</span><span>drop your graphic</span></div>`;
-
-      tile.innerHTML = `
-        <div class="tile__handle" title="Drag to arrange">⠿</div>
-        <div class="tile__media" data-id="${id}">${media_html}</div>
-        <div class="tile__cap">
-          <div class="tile__cat mono accent">${p.cat}</div>
-          <h3 class="tile__title">${p.title}</h3>
-          <p class="tile__desc">${p.desc}</p>
-        </div>`;
-
-      const mediaEl = tile.querySelector(".tile__media");
-      mediaEl.addEventListener("click", () => {
-        if (document.body.classList.contains("arrange")) return;
-        const inp = fileInput();
-        inp.addEventListener("change", () => {
-          const f = inp.files[0]; if (!f) return;
-          const r = new FileReader();
-          r.onload = () => { media[id] = r.result; saveMedia(); render(); };
-          r.readAsDataURL(f);
-        });
-        inp.click();
-      });
-      mediaEl.addEventListener("dragover", e => {
-        if (document.body.classList.contains("arrange")) return;
-        e.preventDefault(); mediaEl.style.outline = "3px solid var(--accent2)"; mediaEl.style.outlineOffset = "-3px";
-      });
-      mediaEl.addEventListener("dragleave", () => { mediaEl.style.outline = ""; });
-      mediaEl.addEventListener("drop", e => {
-        if (document.body.classList.contains("arrange")) return;
-        e.preventDefault(); mediaEl.style.outline = "";
-        const f = e.dataTransfer.files[0];
-        if (!f || !f.type.startsWith("image/")) return;
-        const r = new FileReader();
-        r.onload = () => { media[id] = r.result; saveMedia(); render(); };
-        r.readAsDataURL(f);
-      });
-
-      grid.appendChild(tile);
-    });
-    applyArrangeMode();
-  }
-
-  function saveOrder() { localStorage.setItem(ORDER_KEY, JSON.stringify(order)); }
-  function saveMedia() { localStorage.setItem(MEDIA_KEY, JSON.stringify(media)); }
-
-  const arrangeBtn = document.getElementById("arrangeBtn");
-  let arranging = false;
-  function applyArrangeMode() { document.querySelectorAll(".tile").forEach(t => { t.draggable = arranging; }); }
-
-  arrangeBtn.addEventListener("click", () => {
-    arranging = !arranging;
-    arrangeBtn.setAttribute("aria-pressed", String(arranging));
-    document.body.classList.toggle("arrange", arranging);
-    arrangeBtn.textContent = arranging ? "Done" : "Arrange";
-    applyArrangeMode();
-  });
-
-  let dragId = null;
-  grid.addEventListener("dragstart", e => {
-    const tile = e.target.closest(".tile"); if (!tile || !arranging) return;
-    dragId = tile.dataset.id; tile.classList.add("dragging");
-    e.dataTransfer.effectAllowed = "move";
-  });
-  grid.addEventListener("dragend", e => {
-    const tile = e.target.closest(".tile"); if (tile) tile.classList.remove("dragging");
-    document.querySelectorAll(".tile.drag-over").forEach(t => t.classList.remove("drag-over"));
-    dragId = null;
-  });
-  grid.addEventListener("dragover", e => {
-    if (!arranging) return;
-    const tile = e.target.closest(".tile"); if (!tile || tile.dataset.id === dragId) return;
-    e.preventDefault(); tile.classList.add("drag-over");
-  });
-  grid.addEventListener("dragleave", e => {
-    const tile = e.target.closest(".tile"); if (tile) tile.classList.remove("drag-over");
-  });
-  grid.addEventListener("drop", e => {
-    if (!arranging) return;
-    const tile = e.target.closest(".tile"); if (!tile || !dragId) return;
-    e.preventDefault();
-    const targetId = tile.dataset.id; if (targetId === dragId) return;
-    const from = order.indexOf(dragId), to = order.indexOf(targetId);
-    order.splice(from, 1); order.splice(to, 0, dragId);
-    saveOrder(); render();
-  });
-
-  document.querySelectorAll(".clink[data-ph]").forEach(a => a.addEventListener("click", e => e.preventDefault()));
-
-  const rand = (min, max) => Math.random() * (max - min) + min;
-  // assign each reveal a random start offset + tilt from an arbitrary direction
-  function setRandomSwing(el) {
-    const dirs = [
-      () => ({ rx: rand(-90, -40),  ry: rand(-30, 30) }),   // from left
-      () => ({ rx: rand(40, 90),    ry: rand(-30, 30) }),   // from right
-      () => ({ rx: rand(-30, 30),   ry: rand(-90, -40) }),  // from top
-      () => ({ rx: rand(-30, 30),   ry: rand(40, 90) }),    // from bottom
-      () => ({ rx: rand(-80, 80),   ry: rand(-60, 60) }),   // diagonal
-    ];
-    const d = dirs[Math.floor(Math.random() * dirs.length)]();
-    el.style.setProperty("--rx", d.rx.toFixed(0) + "px");
-    el.style.setProperty("--ry", d.ry.toFixed(0) + "px");
-    el.style.setProperty("--rr", rand(-6, 6).toFixed(1) + "deg");
-    el.style.transitionDelay = rand(0, 140).toFixed(0) + "ms";
-  }
-
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(en => {
-      if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
-    });
-  }, { threshold: 0.12 });
-
-  document.querySelectorAll(".reveal").forEach(el => { setRandomSwing(el); io.observe(el); });
-
-  render();
-</script>
+    </section>
+  </main>
 </body>
 </html>
